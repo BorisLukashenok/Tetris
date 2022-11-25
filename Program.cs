@@ -277,7 +277,42 @@ void PrintBeginLevel(int level, int scores)
 
 bool gameEndLevel;
 
-for (levelGame = 1; levelGame <= maxLevel; levelGame++)
+for (int i = 0; i < gameField.GetLength(0); i++)
+{
+    for (int j = 0; j < gameField.GetLength(1); j++)
+        Write(gameField[i, j]);
+    WriteLine();
+}
+WriteLine();
+gameField = GreatStakanOnField(gameField);
+for (int i = 0; i < gameField.GetLength(0); i++)
+{
+    for (int j = 0; j < gameField.GetLength(1); j++)
+        Write(gameField[i, j]);
+    WriteLine();
+}
+tetrisFigure = GreatFigure(out typeTetrisFigure);
+currentHorizontaPosFigure = beginHorizontaPosFigure;
+currentVerticalPosFigure = beginVerticalPosFigure;
+PrintFigure(tetrisFigure);
+WriteLine();
+gameField = GreatStakanOnField(gameField);
+gameField = emptyField;
+for (int i = 0; i < gameField.GetLength(0); i++)
+{
+    for (int j = 0; j < gameField.GetLength(1); j++)
+        Write(gameField[i, j]);
+    WriteLine();
+}
+tetrisFigure = GreatFigure(out typeTetrisFigure);
+WriteLine();
+WriteLine(CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure));
+WriteLine();
+if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
+    PrintFigure(tetrisFigure);
+
+
+/*for (levelGame = 1; levelGame <= maxLevel; levelGame++)
 {
     gameEndLevel = true;
     gameField = emptyField;
@@ -299,7 +334,7 @@ for (levelGame = 1; levelGame <= maxLevel; levelGame++)
         gameEndLevel = false;
     }
 
-}
+}*/
 
 
 
