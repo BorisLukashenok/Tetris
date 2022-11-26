@@ -1,58 +1,73 @@
 ﻿using static System.Console;
 Clear();
 
-const int widthField = 20,
-          heightField = 12,
+const int widthField = 26,
+          heightField = 15,
           beginHorizontaPosFigure = widthField / 2 - 2,
           beginVerticalPosFigure = 0,
-          maxLevel = 2;
-bool[,] emptyFigure = new bool[4, 4];
+          maxLevel = 2,
+          step = 3;
+
 bool[,] tetrisFigure = new bool[4, 4];
-bool[,] emptyField = new bool[heightField, widthField];
-for (int i = 0; i < emptyField.GetLength(0); i++)
-    for (int j = 0; j < emptyField.GetLength(1); j++)
-        emptyField[i, j] = false;
-bool[,] gameField = emptyField;
+bool[,] gameField = new bool[heightField, widthField];
+gameField = GreatEmptyField();
+
 int typeTetrisFigure = 1,
     scoresGame = 0,
     levelGame = 0,
     currentHorizontaPosFigure = beginHorizontaPosFigure,
-    currentVerticalPosFigure = beginVerticalPosFigure;
+    currentVerticalPosFigure = beginVerticalPosFigure,
+    temporaryVerticalPosFigure = 0,
+    temporaryHorizontalPosFigure = 0;
+bool gameEndLevel,
+     endFallingFigure;
+
+
+bool[,] GreatEmptyField()
+{
+    for (int i = 0; i < gameField.GetLength(0); i++)
+        for (int j = 0; j < gameField.GetLength(1); j++)
+            gameField[i, j] = false;
+    return gameField;
+}
 
 bool[,] GreatStakanOnField(bool[,] changeField)
 {
-    changeField = emptyField;
-    for (int i = 0; i < changeField.GetLength(0) - 1; i++)
+    changeField = GreatEmptyField();
+    for (int i = 0; i < changeField.GetLength(0) - 1 - step; i++)
     {
-        changeField[i, 0] = true;
-        changeField[i, changeField.GetLength(1) - 1] = true;
+        changeField[i, step] = true;
+        changeField[i, changeField.GetLength(1) - 1 - step] = true;
     }
-    for (int i = 0; i < changeField.GetLength(1); i++)
-        changeField[changeField.GetLength(0) - 1, i] = true;
+    for (int i = step; i < changeField.GetLength(1) - step; i++)
+        changeField[changeField.GetLength(0) - 1 - step, i] = true;
     return changeField;
+
+
 }
 
-void PrintFigure(bool[,] printFigure)
+void InsertFigureOnField(bool[,] insertFigure)
 {
-    for (int i = 0; i < printFigure.GetLength(0); i++)
-        for (int j = 0; j < printFigure.GetLength(1); j++)
-            if (printFigure[i, j])
+    for (int i = 0; i < insertFigure.GetLength(0); i++)
+        for (int j = 0; j < insertFigure.GetLength(1); j++)
+            if (insertFigure[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = true;
-
-
+    PrintGameField(gameField, scoresGame);
 }
 
-void ClearFigure(bool[,] clearFigure)
+void RemoveFigureFromField(bool[,] RemoveField)
 {
-    for (int i = 0; i < clearFigure.GetLength(0); i++)
-        for (int j = 0; j < clearFigure.GetLength(1); j++)
-            if (clearFigure[i, j]) gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = false;
+    for (int i = 0; i < RemoveField.GetLength(0); i++)
+        for (int j = 0; j < RemoveField.GetLength(1); j++)
+            if (RemoveField[i, j])
+                gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = false;
+    //PrintGameField(gameField, scoresGame);
 }
 
 bool[,] RotateFigureLine(bool[,] rotateFigure)
 {
     bool[,] temporaryFigure = new bool[rotateFigure.GetLength(0), rotateFigure.GetLength(1)];
-    if (rotateFigure[0, 1])
+    if (rotateFigure[1, 0])
     {
         for (int i = 0; i < rotateFigure.GetLength(1); i++)
             temporaryFigure[1, i] = false;
@@ -66,14 +81,17 @@ bool[,] RotateFigureLine(bool[,] rotateFigure)
         for (int i = 0; i < rotateFigure.GetLength(1); i++)
             temporaryFigure[1, i] = true;
     }
-    if (CheckMistake(temporaryFigure, currentHorizontaPosFigure, currentVerticalPosFigure))
+    RemoveFigureFromField(rotateFigure);
+    if (CheckMistake(temporaryFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
     {
-        ClearFigure(rotateFigure);
-        PrintFigure(temporaryFigure);
+        InsertFigureOnField(temporaryFigure);
         return temporaryFigure;
     }
     else
+    {
+        InsertFigureOnField(rotateFigure);
         return rotateFigure;
+    }
 }
 
 bool[,] RotateFigureSquare(bool[,] rotateFigure)
@@ -87,14 +105,18 @@ bool[,] RotateFigureRightZetAndL(bool[,] rotateFigure)
     for (int i = 0; i < rotateFigure.GetLength(0) - 1; ++i)
         for (int j = 0; j < rotateFigure.GetLength(1) - 1; ++j)
             temporaryFigure[i, j] = rotateFigure[rotateFigure.GetLength(0) - j - 2, i];
-    if (CheckMistake(temporaryFigure, currentHorizontaPosFigure, currentVerticalPosFigure))
+    RemoveFigureFromField(rotateFigure);
+    if (CheckMistake(temporaryFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
     {
-        ClearFigure(rotateFigure);
-        PrintFigure(temporaryFigure);
+
+        InsertFigureOnField(temporaryFigure);
         return temporaryFigure;
     }
     else
+    {
+        InsertFigureOnField(rotateFigure);
         return rotateFigure;
+    }
 }
 
 bool[,] RotateFigureLeftZetAndL(bool[,] rotateFigure)
@@ -103,10 +125,10 @@ bool[,] RotateFigureLeftZetAndL(bool[,] rotateFigure)
     for (int i = 0; i < rotateFigure.GetLength(0) - 1; ++i)
         for (int j = 0; j < rotateFigure.GetLength(1) - 1; ++j)
             temporaryFigure[rotateFigure.GetLength(0) - j - 2, i] = rotateFigure[i, j];
-    if (CheckMistake(temporaryFigure, currentHorizontaPosFigure, currentVerticalPosFigure))
+    if (CheckMistake(temporaryFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
     {
-        ClearFigure(rotateFigure);
-        PrintFigure(temporaryFigure);
+        RemoveFigureFromField(rotateFigure);
+        InsertFigureOnField(temporaryFigure);
         return temporaryFigure;
     }
     else
@@ -159,6 +181,55 @@ bool[,] RotateFigureLeft(bool[,] rotateFigure, int typeRotateFiguree)
             }
     }
     return temporaryFigure;
+}
+
+void MoveFigureDown()
+{
+    temporaryVerticalPosFigure = currentVerticalPosFigure + 1;
+    temporaryHorizontalPosFigure = currentHorizontaPosFigure;
+    RemoveFigureFromField(tetrisFigure);
+    if (CheckMistake(tetrisFigure, currentVerticalPosFigure + 1, currentHorizontaPosFigure))
+    {
+        currentVerticalPosFigure += 1;
+        InsertFigureOnField(tetrisFigure);
+    }
+    else
+    {
+        InsertFigureOnField(tetrisFigure);
+        endFallingFigure = false;
+    }
+}
+
+void MoveFigureRight()
+{
+    temporaryVerticalPosFigure = currentVerticalPosFigure;
+    temporaryHorizontalPosFigure = currentHorizontaPosFigure + 1;
+    RemoveFigureFromField(tetrisFigure);
+    if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure + 1))
+    {
+        currentHorizontaPosFigure += 1;
+        InsertFigureOnField(tetrisFigure);
+    }
+    else
+    {
+        InsertFigureOnField(tetrisFigure);
+    }
+}
+
+void MoveFigureLeft()
+{
+    temporaryVerticalPosFigure = currentVerticalPosFigure;
+    temporaryHorizontalPosFigure = currentHorizontaPosFigure - 1;
+    RemoveFigureFromField(tetrisFigure);
+    if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure - 1))
+    {
+        currentHorizontaPosFigure -= 1;
+        InsertFigureOnField(tetrisFigure);
+    }
+    else
+    {
+        InsertFigureOnField(tetrisFigure);
+    }
 }
 
 bool[,] GreatFigure(out int newTypeFigure)
@@ -223,24 +294,22 @@ bool[,] GreatFigure(out int newTypeFigure)
     return newGreatFigure;
 }
 
-bool CheckMistake(bool[,] compareFigure, int currentHorizontalPos, int currentVerticalPos)
+bool CheckMistake(bool[,] compareFigure, int currentVerticalPos, int currentHorizontalPos)
 {
 
     for (int i = 0; i < compareFigure.GetLength(0); i++)
         for (int j = 0; j < compareFigure.GetLength(1); j++)
-        {
-            WriteLine($"{gameField[currentVerticalPos + i, currentHorizontalPos + j]}+{compareFigure[i, j]}");
             if (gameField[currentVerticalPos + i, currentHorizontalPos + j] && compareFigure[i, j])
                 return false;
-        }
+
     return true;
 }
 
 void PrintGameField(bool[,] Field, int scores)
 {
-    for (int i = 0; i < Field.GetLength(0) - 1; i++)
+    for (int i = 0; i < Field.GetLength(0) - 1 - step; i++)
     {
-        for (int j = 1; j < Field.GetLength(1) - 1; j++)
+        for (int j = 1 + step; j < Field.GetLength(1) - 1 - step; j++)
         {
             CursorLeft = j;
             CursorTop = i;
@@ -249,94 +318,92 @@ void PrintGameField(bool[,] Field, int scores)
         }
         WriteLine();
     }
-    WriteLine("\n\n\n\n  Scores " + scores);
+    CursorLeft = step;
+    CursorTop = heightField + 3;
+    WriteLine("Scores " + scores);
 }
 
 void PrintBeginLevel(int level, int scores)
 {
-    Clear();
     gameField = GreatStakanOnField(gameField);
     for (int i = 0; i < gameField.GetLength(0); i++)
     {
         for (int j = 0; j < gameField.GetLength(1); j++)
         {
-            CursorLeft = j;
-            CursorTop = i;
-            if (gameField[i, j]) WriteLine("X");
-            else WriteLine(" ");
+            Console.CursorLeft = j;
+            Console.CursorTop = i;
+            if (gameField[i, j])
+                Console.WriteLine("X");
+            else
+                Console.WriteLine(" ");
         }
-        WriteLine();
+        Console.WriteLine();
     }
-
-    WriteLine("\n   Level " + level);
-    WriteLine("\n  Scores " + scores);
+    CursorLeft = step;
+    CursorTop = heightField + 1;
+    Console.WriteLine("Level " + level);
+    CursorLeft = step;
+    CursorTop = heightField + 3;
+    Console.WriteLine("Scores " + scores);
 
 }
 
-
-
-bool gameEndLevel;
-
-for (int i = 0; i < gameField.GetLength(0); i++)
+void RotateAndMoveFigure(ConsoleKey key)
 {
-    for (int j = 0; j < gameField.GetLength(1); j++)
-        Write(gameField[i, j]);
-    WriteLine();
+    switch (key)
+    {
+        case ConsoleKey.UpArrow:
+            tetrisFigure = RotateFigureRight(tetrisFigure, typeTetrisFigure);
+            break;
+        case ConsoleKey.DownArrow:
+            MoveFigureDown();
+            break;
+        case ConsoleKey.LeftArrow:
+            MoveFigureLeft();
+            break;
+        case ConsoleKey.RightArrow:
+            MoveFigureRight();
+            break;
+    }
 }
-WriteLine();
-gameField = GreatStakanOnField(gameField);
-for (int i = 0; i < gameField.GetLength(0); i++)
-{
-    for (int j = 0; j < gameField.GetLength(1); j++)
-        Write(gameField[i, j]);
-    WriteLine();
-}
-tetrisFigure = GreatFigure(out typeTetrisFigure);
-currentHorizontaPosFigure = beginHorizontaPosFigure;
-currentVerticalPosFigure = beginVerticalPosFigure;
-PrintFigure(tetrisFigure);
-WriteLine();
-gameField = GreatStakanOnField(gameField);
-gameField = emptyField;
-for (int i = 0; i < gameField.GetLength(0); i++)
-{
-    for (int j = 0; j < gameField.GetLength(1); j++)
-        Write(gameField[i, j]);
-    WriteLine();
-}
-tetrisFigure = GreatFigure(out typeTetrisFigure);
-WriteLine();
-WriteLine(CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure));
-WriteLine();
-if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
-    PrintFigure(tetrisFigure);
 
 
-/*for (levelGame = 1; levelGame <= maxLevel; levelGame++)
+System.Timers.Timer timer = new(interval: 2000);
+timer.Elapsed += (sender, e) => MoveFigureDown();
+
+Console.CursorVisible = false;
+for (levelGame = 1; levelGame <= maxLevel; levelGame++)
 {
     gameEndLevel = true;
-    gameField = emptyField;
+    endFallingFigure = true;
     PrintBeginLevel(levelGame, scoresGame);
-    var b = ReadLine()!;
     while (gameEndLevel)
     {
         tetrisFigure = GreatFigure(out typeTetrisFigure);
         currentHorizontaPosFigure = beginHorizontaPosFigure;
         currentVerticalPosFigure = beginVerticalPosFigure;
-        Write(CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure));
+        timer.Start();
         if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
         {
-            PrintFigure(tetrisFigure);
+            InsertFigureOnField(tetrisFigure);
             PrintGameField(gameField, scoresGame);
+            endFallingFigure = true;
+            while (endFallingFigure)
+            {
+                if (Console.KeyAvailable)
+                    RotateAndMoveFigure(Console.ReadKey(true).Key);
+            }
         }
-        var a = ReadLine()!;
-
-        gameEndLevel = false;
+        else
+        {
+            timer.Stop();
+            gameEndLevel = false;
+        }
     }
 
-}*/
-
-
+}
+Console.CursorVisible = true;
+timer.Dispose();
 
 
 
