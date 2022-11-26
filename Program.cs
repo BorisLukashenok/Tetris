@@ -51,20 +51,24 @@ bool[,] GreatStakanOnField(bool[,] gameField)
 
 void InsertFigureOnField(bool[,] insertFigure)
 {
+    switchAccessField = false;
     for (int i = 0; i < insertFigure.GetLength(0); i++)
         for (int j = 0; j < insertFigure.GetLength(1); j++)
             if (insertFigure[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = true;
     PrintGameField();
+    switchAccessField = true;
 }
 
 void RemoveFigureFromField(bool[,] RemoveField)
 {
+    switchAccessField = false;
     for (int i = 0; i < RemoveField.GetLength(0); i++)
         for (int j = 0; j < RemoveField.GetLength(1); j++)
             if (RemoveField[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = false;
     //PrintGameField(gameField, scoresGame);
+    switchAccessField = true;
 }
 
 bool[,] RotateFigureLine(bool[,] rotateFigure)
@@ -188,6 +192,14 @@ bool[,] RotateFigureLeft(bool[,] rotateFigure, int typeRotateFiguree)
 
 void MoveFigureDown()
 {
+    if (!switchAccessField)
+        while (true)
+        {
+            if (switchAccessField)
+                break;
+            else
+                Thread.Sleep(250);
+        }
     temporaryVerticalPosFigure = currentVerticalPosFigure + 1;
     temporaryHorizontalPosFigure = currentHorizontaPosFigure;
     RemoveFigureFromField(tetrisFigure);
@@ -353,6 +365,14 @@ void PrintBeginLevel(int level, int scores)
 
 void RotateAndMoveFigure(ConsoleKey key)
 {
+    if (!switchAccessField)
+        while (true)
+        {
+            if (switchAccessField)
+                break;
+            else
+                Thread.Sleep(250);
+        }
     switch (key)
     {
         case ConsoleKey.UpArrow:
