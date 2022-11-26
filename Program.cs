@@ -55,7 +55,7 @@ void InsertFigureOnField(bool[,] insertFigure)
         for (int j = 0; j < insertFigure.GetLength(1); j++)
             if (insertFigure[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = true;
-    PrintGameField(gameField, scoresGame);
+    PrintGameField();
 }
 
 void RemoveFigureFromField(bool[,] RemoveField)
@@ -308,22 +308,22 @@ bool CheckMistake(bool[,] compareFigure, int currentVerticalPos, int currentHori
     return true;
 }
 
-void PrintGameField(bool[,] Field, int scores)
+void PrintGameField()
 {
-    for (int i = 0; i < Field.GetLength(0) - 1 - step; i++)
+    for (int i = 0; i < gameField.GetLength(0) - 1 - step; i++)
     {
-        for (int j = 1 + step; j < Field.GetLength(1) - 1 - step; j++)
+        for (int j = 1 + step; j < gameField.GetLength(1) - 1 - step; j++)
         {
             CursorLeft = j;
             CursorTop = i;
-            if (Field[i, j]) WriteLine("*");
+            if (gameField[i, j]) WriteLine("*");
             else WriteLine(" ");
         }
         WriteLine();
     }
     CursorLeft = step;
     CursorTop = heightField + 3;
-    WriteLine("Scores " + scores);
+    WriteLine("Scores " + scoresGame);
 }
 
 void PrintBeginLevel(int level, int scores)
@@ -389,7 +389,7 @@ for (levelGame = 1; levelGame <= maxLevel; levelGame++)
         if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
         {
             InsertFigureOnField(tetrisFigure);
-            PrintGameField(gameField, scoresGame);
+            PrintGameField();
             endFallingFigure = true;
             while (endFallingFigure)
             {
