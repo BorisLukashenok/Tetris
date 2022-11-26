@@ -6,7 +6,8 @@ const int widthField = 26,
           beginHorizontaPosFigure = widthField / 2 - 2,
           beginVerticalPosFigure = 0,
           maxLevel = 2,
-          step = 3;
+          step = 3; // Отступ от границ массива, чтоб при проверки воможности наложения фигуры на поле 
+                    // не заходить за границы массива с игровым полем
 
 bool[,] tetrisFigure = new bool[4, 4];
 bool[,] gameField = new bool[heightField, widthField];
@@ -20,7 +21,9 @@ int typeTetrisFigure = 1,
     temporaryVerticalPosFigure = 0,
     temporaryHorizontalPosFigure = 0;
 bool gameEndLevel,
-     endFallingFigure;
+     endFallingFigure,
+     switchAccessField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
+                               // и по таймеру, не изменяли его одновременно
 
 
 bool[,] GreatEmptyField()
@@ -31,17 +34,17 @@ bool[,] GreatEmptyField()
     return gameField;
 }
 
-bool[,] GreatStakanOnField(bool[,] changeField)
+bool[,] GreatStakanOnField(bool[,] gameField)
 {
-    changeField = GreatEmptyField();
-    for (int i = 0; i < changeField.GetLength(0) - 1 - step; i++)
+    gameField = GreatEmptyField();
+    for (int i = 0; i < gameField.GetLength(0) - 1 - step; i++)
     {
-        changeField[i, step] = true;
-        changeField[i, changeField.GetLength(1) - 1 - step] = true;
+        gameField[i, step] = true;
+        gameField[i, gameField.GetLength(1) - 1 - step] = true;
     }
-    for (int i = step; i < changeField.GetLength(1) - step; i++)
-        changeField[changeField.GetLength(0) - 1 - step, i] = true;
-    return changeField;
+    for (int i = step; i < gameField.GetLength(1) - step; i++)
+        gameField[gameField.GetLength(0) - 1 - step, i] = true;
+    return gameField;
 
 
 }
