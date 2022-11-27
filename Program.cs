@@ -10,7 +10,12 @@ const int indentFromTheLeft = 25,  // отступ от левого края т
           step = 3; // Отступ от границ массива, чтоб при проверки воможности наложения фигуры на поле 
                     // не заходить за границы массива с игровым полем
 
-const char simbolBlock = '█';
+const char simbolBlock = '█',
+           simbolArrowRight = '→',
+           simbolArrowLeft='←',
+           simbolArrowDown ='↓',
+           simbolArrowUp='↑';
+
 
 bool[,] tetrisFigure = new bool[4, 4];
 bool[,] gameField = new bool[heightField, widthField];
@@ -397,12 +402,35 @@ void PrintBeginLevel(int level, int scores)
         Console.WriteLine();
     }
     Console.ForegroundColor = ConsoleColor.DarkYellow;
+
     Console.CursorLeft = step + indentFromTheLeft;
     Console.CursorTop = heightField;
     Console.WriteLine("Level " + level);
+
     Console.CursorLeft = step + indentFromTheLeft;
     Console.CursorTop = heightField + 2;
     Console.WriteLine("Scores " + scores);
+  
+    Console.CursorLeft = step + indentFromTheLeft;
+    Console.CursorTop = heightField + 2;
+    Console.WriteLine("Scores " + scores);
+
+    Console.CursorLeft = widthField + indentFromTheLeft;
+    Console.CursorTop = heightField - 14;
+    Console.WriteLine($"{simbolArrowUp} and W - ROTATE FIGURE");
+
+    Console.CursorLeft = widthField + indentFromTheLeft;
+    Console.CursorTop = heightField - 12;
+    Console.WriteLine($" and A - MOVE FIGURE LEFT");
+
+    Console.CursorLeft = widthField + indentFromTheLeft;
+    Console.CursorTop = heightField - 10;
+    Console.WriteLine($"{simbolArrowRight} and D - MOVE FIGURE RIGHT");
+
+    Console.CursorLeft = widthField + indentFromTheLeft;
+    Console.CursorTop = heightField - 8;
+    Console.WriteLine($"{simbolArrowDown} and S - MOVE FIGURE SPEED DOWN");
+
     Console.ResetColor();
 }
 
@@ -411,15 +439,19 @@ void RotateAndMoveFigure(ConsoleKey key)
     CheckedAndWiteAccess();
     switch (key)
     {
+        case ConsoleKey.W:
         case ConsoleKey.UpArrow:
             tetrisFigure = RotateFigureRight(tetrisFigure, typeTetrisFigure);
             break;
+        case ConsoleKey.S:   
         case ConsoleKey.DownArrow:
             MoveFigureDown();
             break;
+        case ConsoleKey.A:    
         case ConsoleKey.LeftArrow:
             MoveFigureLeft();
             break;
+        case ConsoleKey.D:    
         case ConsoleKey.RightArrow:
             MoveFigureRight();
             break;
