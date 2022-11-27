@@ -65,6 +65,7 @@ for (levelGame = 1; levelGame <= maxLevel; levelGame++)
 Console.ResetColor();
 Console.CursorVisible = true;
 timer.Dispose();
+Console.Clear();
 
 // Конец программы
 
@@ -246,6 +247,7 @@ void MoveFigureDown()
     else
     {
         InsertFigureOnField(tetrisFigure);
+        VerifyFullLine();
         endFallingFigure = false;
     }
 }
@@ -439,4 +441,45 @@ void CheckedAndWiteAccess()
             else
                 Thread.Sleep(250);
         }
+}
+
+void ShiftField(int endShift, int deleteLine)
+{
+    for (int i = deleteLine; i > endShift; i--)
+    {
+        for (int j = 1 + step; j < gameField.GetLength(1) - 1 - step; j++)
+            gameField[i, j] = gameField[i - 1, j];
+    }
+    for (int k = 1 + step; k < gameField.GetLength(1) - 1 - step; k++)
+        gameField[endShift, k] = false;
+
+}
+
+void VerifyFullLine()
+{
+    int posFirstNoEmptyString = 0;
+    bool firstNoEmptyString = true,
+         checkedFullLine;
+    for (int i = 0; i < gameField.GetLength(0) - 1 - step; i++)
+    {
+        checkedFullLine = true;
+        for (int j = 1 + step; j < gameField.GetLength(1) - 1 - step; j++)
+        {
+            if (!gameField[i, j])
+                checkedFullLine = false;
+            else
+            {
+                if (firstNoEmptyString)
+                {
+                    firstNoEmptyString = false;
+                    posFirstNoEmptyString = i;
+                }
+            }
+        }
+        if (checkedFullLine)
+        {
+            ShiftField(posFirstNoEmptyString, i);
+            scoresGame += 10;
+        }
+    }
 }
