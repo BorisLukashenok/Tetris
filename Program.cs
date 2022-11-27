@@ -25,9 +25,8 @@ int typeTetrisFigure = 1,
     scoresGame = 0,
     levelGame = 0,
     currentHorizontaPosFigure = beginHorizontaPosFigure,
-    currentVerticalPosFigure = beginVerticalPosFigure,
-    temporaryVerticalPosFigure = 0,
-    temporaryHorizontalPosFigure = 0;
+    currentVerticalPosFigure = beginVerticalPosFigure;
+    
 bool gameEndLevel,
      endFallingFigure,
      switchAccessToField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
@@ -56,7 +55,7 @@ for (levelGame = 1; levelGame <= maxLevel; levelGame++)
             while (endFallingFigure)
             {
                 if (Console.KeyAvailable)
-                    RotateAndMoveFigure(Console.ReadKey(true).Key);
+                    RotateAndMoveFigure(Console.ReadKey(true).Key);                
             }
         }
         else
@@ -241,8 +240,6 @@ bool[,] RotateFigureLeft(bool[,] rotateFigure, int typeRotateFiguree)
 void MoveFigureDown()
 {
     CheckedAndWiteAccess();
-    temporaryVerticalPosFigure = currentVerticalPosFigure + 1;
-    temporaryHorizontalPosFigure = currentHorizontaPosFigure;
     RemoveFigureFromField(tetrisFigure);
     if (CheckMistake(tetrisFigure, currentVerticalPosFigure + 1, currentHorizontaPosFigure))
     {
@@ -259,8 +256,6 @@ void MoveFigureDown()
 
 void MoveFigureRight()
 {
-    temporaryVerticalPosFigure = currentVerticalPosFigure;
-    temporaryHorizontalPosFigure = currentHorizontaPosFigure + 1;
     RemoveFigureFromField(tetrisFigure);
     if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure + 1))
     {
@@ -274,9 +269,7 @@ void MoveFigureRight()
 }
 
 void MoveFigureLeft()
-{
-    temporaryVerticalPosFigure = currentVerticalPosFigure;
-    temporaryHorizontalPosFigure = currentHorizontaPosFigure - 1;
+{    
     RemoveFigureFromField(tetrisFigure);
     if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure - 1))
     {
@@ -487,7 +480,7 @@ void ShiftField(int endShift, int deleteLine)
 
 }
 
-void VerifyFullLine()
+void VerifyFullLine()  
 {
     int posFirstNoEmptyString = 0;
     bool firstNoEmptyString = true,
