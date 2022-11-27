@@ -421,7 +421,7 @@ void PrintBeginLevel(int level, int scores)
 
     Console.CursorLeft = widthField + indentFromTheLeft;
     Console.CursorTop = heightField - 12;
-    Console.WriteLine($" and A - MOVE FIGURE LEFT");
+    Console.WriteLine($"{simbolArrowRight} and A - MOVE FIGURE LEFT");
 
     Console.CursorLeft = widthField + indentFromTheLeft;
     Console.CursorTop = heightField - 10;
