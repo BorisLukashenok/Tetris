@@ -1,7 +1,7 @@
-﻿using static System.Console;
-Clear();
+﻿
+Console.Clear();
 
-const int indentFromTheLeft =25,  // отступ от левого края терминала
+const int indentFromTheLeft = 25,  // отступ от левого края терминала
           widthField = 26,
           heightField = 15,
           beginHorizontaPosFigure = widthField / 2 - 2,
@@ -62,6 +62,7 @@ for (levelGame = 1; levelGame <= maxLevel; levelGame++)
     }
 
 }
+Console.ResetColor();
 Console.CursorVisible = true;
 timer.Dispose();
 
@@ -356,31 +357,12 @@ bool CheckMistake(bool[,] compareFigure, int currentVerticalPos, int currentHori
 
 void PrintGameField()
 {
-    
+    Console.ForegroundColor = ConsoleColor.Green;
     for (int i = 0; i < gameField.GetLength(0) - 1 - step; i++)
     {
         for (int j = 1 + step; j < gameField.GetLength(1) - 1 - step; j++)
         {
-            CursorLeft = j+indentFromTheLeft;
-            CursorTop = i;
-            if (gameField[i, j]) WriteLine(simbolBlock);
-            else WriteLine(" ");
-        }
-        WriteLine();
-    }
-    CursorLeft = step+indentFromTheLeft;
-    CursorTop = heightField + 3;
-    WriteLine("Scores " + scoresGame);
-}
-
-void PrintBeginLevel(int level, int scores)
-{
-    gameField = GreatStakanOnField(gameField);
-    for (int i = 0; i < gameField.GetLength(0); i++)
-    {
-        for (int j = 0; j < gameField.GetLength(1); j++)
-        {
-            Console.CursorLeft = j+indentFromTheLeft;
+            Console.CursorLeft = j + indentFromTheLeft;
             Console.CursorTop = i;
             if (gameField[i, j])
                 Console.WriteLine(simbolBlock);
@@ -389,13 +371,37 @@ void PrintBeginLevel(int level, int scores)
         }
         Console.WriteLine();
     }
-    CursorLeft = step+indentFromTheLeft;
-    CursorTop = heightField + 1;
-    Console.WriteLine("Level " + level);
-    CursorLeft = step+indentFromTheLeft;
-    CursorTop = heightField + 3;
-    Console.WriteLine("Scores " + scores);
+    Console.CursorLeft = step + indentFromTheLeft;
+    Console.CursorTop = heightField + 2;
+    Console.WriteLine("Scores " + scoresGame);
+    Console.CursorVisible = false;
+}
 
+void PrintBeginLevel(int level, int scores)
+{
+    gameField = GreatStakanOnField(gameField);
+    Console.ForegroundColor = ConsoleColor.Blue;
+    for (int i = 0; i < gameField.GetLength(0); i++)
+    {
+        for (int j = 0; j < gameField.GetLength(1); j++)
+        {
+            Console.CursorLeft = j + indentFromTheLeft;
+            Console.CursorTop = i;
+            if (gameField[i, j])
+                Console.WriteLine(simbolBlock);
+            else
+                Console.WriteLine(" ");
+        }
+        Console.WriteLine();
+    }
+    Console.ForegroundColor = ConsoleColor.DarkYellow;
+    Console.CursorLeft = step + indentFromTheLeft;
+    Console.CursorTop = heightField;
+    Console.WriteLine("Level " + level);
+    Console.CursorLeft = step + indentFromTheLeft;
+    Console.CursorTop = heightField + 2;
+    Console.WriteLine("Scores " + scores);
+    Console.ResetColor();
 }
 
 void RotateAndMoveFigure(ConsoleKey key)
@@ -420,7 +426,7 @@ void RotateAndMoveFigure(ConsoleKey key)
 
 void ChangeAccess()
 {
-    switchAccessToField=!switchAccessToField;
+    switchAccessToField = !switchAccessToField;
 }
 
 void CheckedAndWiteAccess()
