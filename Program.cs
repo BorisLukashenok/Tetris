@@ -8,7 +8,7 @@ const int widthField = 26,
           maxLevel = 2,
           step = 3; // Отступ от границ массива, чтоб при проверки воможности наложения фигуры на поле 
                     // не заходить за границы массива с игровым полем
-
+const char simbolBlock = '█';
 bool[,] tetrisFigure = new bool[4, 4];
 bool[,] gameField = new bool[heightField, widthField];
 gameField = GreatEmptyField();
@@ -25,6 +25,44 @@ bool gameEndLevel,
      switchAccessToField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
                                // и по таймеру, не изменяли его одновременно
 
+System.Timers.Timer timer = new(interval: 2000);
+timer.Elapsed += (sender, e) => MoveFigureDown();
+
+Console.CursorVisible = false;
+for (levelGame = 1; levelGame <= maxLevel; levelGame++)
+{
+    gameEndLevel = true;
+    endFallingFigure = true;
+    PrintBeginLevel(levelGame, scoresGame);
+    while (gameEndLevel)
+    {
+        tetrisFigure = GreatFigure(out typeTetrisFigure);
+        currentHorizontaPosFigure = beginHorizontaPosFigure;
+        currentVerticalPosFigure = beginVerticalPosFigure;
+        timer.Start();
+        if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
+        {
+            InsertFigureOnField(tetrisFigure);
+            PrintGameField();
+            endFallingFigure = true;
+            while (endFallingFigure)
+            {
+                if (Console.KeyAvailable)
+                    RotateAndMoveFigure(Console.ReadKey(true).Key);
+            }
+        }
+        else
+        {
+            timer.Stop();
+            gameEndLevel = false;
+        }
+    }
+
+}
+Console.CursorVisible = true;
+timer.Dispose();
+
+// Конец программы
 
 bool[,] GreatEmptyField()
 {
@@ -321,7 +359,7 @@ void PrintGameField()
         {
             CursorLeft = j;
             CursorTop = i;
-            if (gameField[i, j]) WriteLine("*");
+            if (gameField[i, j]) WriteLine(simbolBlock);
             else WriteLine(" ");
         }
         WriteLine();
@@ -341,7 +379,7 @@ void PrintBeginLevel(int level, int scores)
             Console.CursorLeft = j;
             Console.CursorTop = i;
             if (gameField[i, j])
-                Console.WriteLine("X");
+                Console.WriteLine(simbolBlock);
             else
                 Console.WriteLine(" ");
         }
@@ -392,43 +430,3 @@ void CheckedAndWiteAccess()
                 Thread.Sleep(250);
         }
 }
-
-System.Timers.Timer timer = new(interval: 2000);
-timer.Elapsed += (sender, e) => MoveFigureDown();
-
-Console.CursorVisible = false;
-for (levelGame = 1; levelGame <= maxLevel; levelGame++)
-{
-    gameEndLevel = true;
-    endFallingFigure = true;
-    PrintBeginLevel(levelGame, scoresGame);
-    while (gameEndLevel)
-    {
-        tetrisFigure = GreatFigure(out typeTetrisFigure);
-        currentHorizontaPosFigure = beginHorizontaPosFigure;
-        currentVerticalPosFigure = beginVerticalPosFigure;
-        timer.Start();
-        if (CheckMistake(tetrisFigure, currentVerticalPosFigure, currentHorizontaPosFigure))
-        {
-            InsertFigureOnField(tetrisFigure);
-            PrintGameField();
-            endFallingFigure = true;
-            while (endFallingFigure)
-            {
-                if (Console.KeyAvailable)
-                    RotateAndMoveFigure(Console.ReadKey(true).Key);
-            }
-        }
-        else
-        {
-            timer.Stop();
-            gameEndLevel = false;
-        }
-    }
-
-}
-Console.CursorVisible = true;
-timer.Dispose();
-
-
-
