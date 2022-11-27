@@ -1,14 +1,17 @@
 ﻿using static System.Console;
 Clear();
 
-const int widthField = 26,
+const int indentFromTheLeft =25,  // отступ от левого края терминала
+          widthField = 26,
           heightField = 15,
           beginHorizontaPosFigure = widthField / 2 - 2,
           beginVerticalPosFigure = 0,
           maxLevel = 2,
           step = 3; // Отступ от границ массива, чтоб при проверки воможности наложения фигуры на поле 
                     // не заходить за границы массива с игровым полем
+
 const char simbolBlock = '█';
+
 bool[,] tetrisFigure = new bool[4, 4];
 bool[,] gameField = new bool[heightField, widthField];
 gameField = GreatEmptyField();
@@ -23,7 +26,7 @@ int typeTetrisFigure = 1,
 bool gameEndLevel,
      endFallingFigure,
      switchAccessToField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
-                               // и по таймеру, не изменяли его одновременно
+                                 // и по таймеру, не изменяли его одновременно
 
 System.Timers.Timer timer = new(interval: 2000);
 timer.Elapsed += (sender, e) => MoveFigureDown();
@@ -353,18 +356,19 @@ bool CheckMistake(bool[,] compareFigure, int currentVerticalPos, int currentHori
 
 void PrintGameField()
 {
+    
     for (int i = 0; i < gameField.GetLength(0) - 1 - step; i++)
     {
         for (int j = 1 + step; j < gameField.GetLength(1) - 1 - step; j++)
         {
-            CursorLeft = j;
+            CursorLeft = j+indentFromTheLeft;
             CursorTop = i;
             if (gameField[i, j]) WriteLine(simbolBlock);
             else WriteLine(" ");
         }
         WriteLine();
     }
-    CursorLeft = step;
+    CursorLeft = step+indentFromTheLeft;
     CursorTop = heightField + 3;
     WriteLine("Scores " + scoresGame);
 }
@@ -376,7 +380,7 @@ void PrintBeginLevel(int level, int scores)
     {
         for (int j = 0; j < gameField.GetLength(1); j++)
         {
-            Console.CursorLeft = j;
+            Console.CursorLeft = j+indentFromTheLeft;
             Console.CursorTop = i;
             if (gameField[i, j])
                 Console.WriteLine(simbolBlock);
@@ -385,10 +389,10 @@ void PrintBeginLevel(int level, int scores)
         }
         Console.WriteLine();
     }
-    CursorLeft = step;
+    CursorLeft = step+indentFromTheLeft;
     CursorTop = heightField + 1;
     Console.WriteLine("Level " + level);
-    CursorLeft = step;
+    CursorLeft = step+indentFromTheLeft;
     CursorTop = heightField + 3;
     Console.WriteLine("Scores " + scores);
 
