@@ -22,7 +22,7 @@ int typeTetrisFigure = 1,
     temporaryHorizontalPosFigure = 0;
 bool gameEndLevel,
      endFallingFigure,
-     switchAccessField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
+     switchAccessToField = true; // Доступ к игровому полю(gameField), чтоб функции по нажатию клавиши
                                // и по таймеру, не изменяли его одновременно
 
 
@@ -51,24 +51,24 @@ bool[,] GreatStakanOnField(bool[,] gameField)
 
 void InsertFigureOnField(bool[,] insertFigure)
 {
-    switchAccessField = false;
+    ChangeAccess();
     for (int i = 0; i < insertFigure.GetLength(0); i++)
         for (int j = 0; j < insertFigure.GetLength(1); j++)
             if (insertFigure[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = true;
     PrintGameField();
-    switchAccessField = true;
+    ChangeAccess();
 }
 
 void RemoveFigureFromField(bool[,] RemoveField)
 {
-    switchAccessField = false;
+    ChangeAccess();
     for (int i = 0; i < RemoveField.GetLength(0); i++)
         for (int j = 0; j < RemoveField.GetLength(1); j++)
             if (RemoveField[i, j])
                 gameField[currentVerticalPosFigure + i, currentHorizontaPosFigure + j] = false;
     //PrintGameField(gameField, scoresGame);
-    switchAccessField = true;
+    ChangeAccess();
 }
 
 bool[,] RotateFigureLine(bool[,] rotateFigure)
@@ -192,14 +192,7 @@ bool[,] RotateFigureLeft(bool[,] rotateFigure, int typeRotateFiguree)
 
 void MoveFigureDown()
 {
-    if (!switchAccessField)
-        while (true)
-        {
-            if (switchAccessField)
-                break;
-            else
-                Thread.Sleep(250);
-        }
+    CheckedAndWiteAccess();
     temporaryVerticalPosFigure = currentVerticalPosFigure + 1;
     temporaryHorizontalPosFigure = currentHorizontaPosFigure;
     RemoveFigureFromField(tetrisFigure);
@@ -365,14 +358,7 @@ void PrintBeginLevel(int level, int scores)
 
 void RotateAndMoveFigure(ConsoleKey key)
 {
-    if (!switchAccessField)
-        while (true)
-        {
-            if (switchAccessField)
-                break;
-            else
-                Thread.Sleep(250);
-        }
+    CheckedAndWiteAccess();
     switch (key)
     {
         case ConsoleKey.UpArrow:
@@ -390,6 +376,22 @@ void RotateAndMoveFigure(ConsoleKey key)
     }
 }
 
+void ChangeAccess()
+{
+    switchAccessToField=!switchAccessToField;
+}
+
+void CheckedAndWiteAccess()
+{
+    if (!switchAccessToField)
+        while (true)
+        {
+            if (switchAccessToField)
+                break;
+            else
+                Thread.Sleep(250);
+        }
+}
 
 System.Timers.Timer timer = new(interval: 2000);
 timer.Elapsed += (sender, e) => MoveFigureDown();
